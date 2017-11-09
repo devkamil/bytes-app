@@ -1,6 +1,7 @@
 package pl.devkamil.app.service;
 
 import org.springframework.stereotype.Service;
+import pl.devkamil.app.model.RequestFromView;
 
 import java.io.*;
 
@@ -54,6 +55,14 @@ public class ByteService {
             ex.printStackTrace();
         }
 
+    }
+
+
+    public void show(RequestFromView requestFromView){
+        System.out.println(requestFromView.getPathToFile());
+        System.out.println(requestFromView.getFileExtension());
+        System.out.println(requestFromView.getInputBytes());
+        System.out.println(requestFromView.getOutputBytes());
     }
 
 }

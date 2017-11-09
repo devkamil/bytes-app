@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script data-require="angular.js@1.6.6" data-semver="1.6.6"
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.js"></script>
+
+    <meta charset="UTF-8">
+    <style type="text/css">
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none !important;
+        }
+    </style>
+
+    <title>Bytes App</title>
+</head>
+
+
+<body ng-app="byte-app">
+    <div class="container">
+        <h3><b>Byte App</b></h3>
+            <div ng-controller="bytes" ng-cloak class="ng-cloak">
+                <p>The ID  is {{ file.id }}</p>
+                <p>The read file is: {{ file.read }}</p>
+                <p>readfile {{ name }} </p>
+                <form name="byteAdd">
+                    <p>Path: <input type="textarea" placeholder="...path to file..." ng-model="pathToFile" /></p>
+                    <p>File extension: <input type="textarea" placeholder="...extension..." ng-model="fileExtension" /></p>
+                    <p>Input sequence of bytes: <input type="textarea" placeholder="...input bytes..." ng-model="inputBytes" /></p>
+                    <p>Output sequence of bytes: <input type="textarea" placeholder="...output bytes..." ng-model="outputBytes" /></p>
+                    <button type="submit" value="Post" ng-click="searchAndReplace()">Post</button>
+                </form>
+                <br/>
+                <p>Path to file: {{pathToFile}}</p>
+                <p>File extension: {{fileExtension}}</p>
+                <p>Input sequence of bytes: {{inputBytes}}</p>
+                <p>Output sequence of bytes: {{outputBytes}}</p>
+                <br/>
+
+            </div>
+    </div>
+
+<script src="js/app-bytes.js"></script>
+
+</body>
+</html>
