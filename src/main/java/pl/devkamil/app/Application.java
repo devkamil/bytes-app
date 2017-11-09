@@ -9,9 +9,10 @@ public class Application {
 
         ByteService byteService = new ByteService();
 
-        System.out.println("Working Directory: " + System.getProperty("user.dir"));
+//        System.out.println("Working Directory: " + System.getProperty("user.dir"));
 
-        byteService.readFile();
+        byteService.readFile("FileToRead11.txt");
+        byteService.writeFile("FileToRead111.txt");
 
     }
 

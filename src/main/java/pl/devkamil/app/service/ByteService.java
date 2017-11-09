@@ -4,14 +4,17 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 
+
 @Service
 public class ByteService {
 
-    String filename = "FileToRead.txt";
+    String everything = "";
 
-    public void readFile() {
+    public String readFile(String path) {
 
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF8"))) {
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF8"))) {
+
             StringBuilder stringBuilder = new StringBuilder();
             String line = bufferedReader.readLine();
 
@@ -21,15 +24,36 @@ public class ByteService {
                 line = bufferedReader.readLine();
 
             }
-            String everything = stringBuilder.toString();
+            everything = stringBuilder.toString();
             System.out.println(everything);
+
 
 
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
+        return everything;
+    }
+
+
+    public void writeFile(String path){
+
+        try(BufferedWriter bufferedWriter =
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF8"))) {
+
+
+            bufferedWriter.write(everything);
+
+        } catch (IOException ex){
+            ex.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
 }
