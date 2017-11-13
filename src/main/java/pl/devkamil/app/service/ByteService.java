@@ -1,9 +1,14 @@
 package pl.devkamil.app.service;
 
 import org.springframework.stereotype.Service;
-import pl.devkamil.app.model.RequestFromView;
+import pl.devkamil.app.model.DataFromViewDTO;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -58,11 +63,49 @@ public class ByteService {
     }
 
 
-    public void show(RequestFromView requestFromView){
-        System.out.println(requestFromView.getPathToFile());
-        System.out.println(requestFromView.getFileExtension());
-        System.out.println(requestFromView.getInputBytes());
-        System.out.println(requestFromView.getOutputBytes());
+//    public void show(DataFromViewDTO dataFromViewDTO){
+//        System.out.println(dataFromViewDTO.getPathToFile());
+//        System.out.println(dataFromViewDTO.getFileExtension());
+//        System.out.println(dataFromViewDTO.getInputBytes());
+//        System.out.println(dataFromViewDTO.getOutputBytes());
+//
+//
+//    }
+
+
+    public File[] searchInDirectory(String pathToFile, String fileExtension){
+        File dir = new File(pathToFile);
+
+        return dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(fileExtension);
+            }
+        });
+
+
     }
+
+
+//    public List<File> listFiles() throws IOException{
+//
+//        String onlyPath = "D:\\GAME   OF  Thrones";
+//        String completeCmd = "explorer.exe /select," + onlyPath;
+//        new ProcessBuilder(("explorer.exe " + completeCmd).split(" ")).start();
+//
+//        List<File> filesInFolder = Files.walk(Paths.get("D:\\Intellij-workspace\\QBS\\bytes-app"))
+//                .filter(Files::isRegularFile)
+//                .map(Path::toFile)
+//                .collect(Collectors.toList());
+//
+//        System.out.println(filesInFolder);
+//        return filesInFolder;
+//    }
+
+//    public void listFiles() throws IOException{
+//        Files.walk(Paths.get("D:\\Intellij-workspace\\QBS\\bytes-app"))
+//                .filter(Files::isRegularFile)
+//                .forEach(System.out::println);
+//    }
 
 }

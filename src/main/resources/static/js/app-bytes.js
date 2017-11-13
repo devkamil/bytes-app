@@ -28,4 +28,6 @@ app.controller('bytes', function($scope, $http) {
     $scope.name = 'namenamename';
 
 
+
+
 });
