@@ -24,7 +24,7 @@
                 <p>readfile {{ name }} </p>
                 <form name="byteAdd">
                     <p>Path: <input type="textarea" placeholder="...path to file..." ng-model="pathToFile" /></p>
-                    <p>File extension: <input type="textarea" placeholder="...extension..." ng-model="fileExtension" /></p>
+                    <p>File extension (without dot): <input type="textarea" placeholder="...extension..." ng-model="fileExtension" /></p>
                     <p>Input sequence of bytes: <input type="textarea" placeholder="...input bytes..." ng-model="inputBytes" /></p>
                     <p>Output sequence of bytes: <input type="textarea" placeholder="...output bytes..." ng-model="outputBytes" /></p>
                     <button type="submit" value="Post" ng-click="searchAndReplace()">Post</button>

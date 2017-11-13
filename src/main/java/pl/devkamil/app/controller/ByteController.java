@@ -47,9 +47,9 @@ public class ByteController {
 
 
     @PostMapping("/search")
-    public void searchFilesWithThisExtension(@RequestBody DataFromViewDTO dataFromViewDTO){
+    public void searchAndChangeBytesInFilesInGivenDirectoryAndWithGivenExtension(@RequestBody DataFromViewDTO dataFromViewDTO){
 
-        File[] tab = byteService.searchInDirectory(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
+        File[] tab = byteService.searchFilesInGivenDirectoryWithGivenExtension(dataFromViewDTO);
 
         for(Object o: tab){
             System.out.println(o);

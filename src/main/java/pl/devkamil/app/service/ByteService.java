@@ -73,13 +73,13 @@ public class ByteService {
 //    }
 
 
-    public File[] searchInDirectory(String pathToFile, String fileExtension){
-        File dir = new File(pathToFile);
+    public File[] searchFilesInGivenDirectoryWithGivenExtension(DataFromViewDTO dataFromViewDTO){
+        File dir = new File(dataFromViewDTO.getPathToFile());
 
         return dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return filename.endsWith(fileExtension);
+                return filename.endsWith("." + dataFromViewDTO.getFileExtension());
             }
         });
 
