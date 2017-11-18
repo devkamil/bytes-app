@@ -33,7 +33,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.riversun</groupId>
+            <artifactId>bigdoc</artifactId>
+            <version>0.3.0</version>
+        </dependency>
 
 
     </dependencies>

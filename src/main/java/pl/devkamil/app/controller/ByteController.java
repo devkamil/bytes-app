@@ -7,6 +7,7 @@ import pl.devkamil.app.service.ByteService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -47,15 +48,26 @@ public class ByteController {
 
 
     @PostMapping("/search")
-    public void searchAndChangeBytesInFilesInGivenDirectoryAndWithGivenExtension(@RequestBody DataFromViewDTO dataFromViewDTO){
+    public void searchAndChangeBytesInFilesInGivenDirectoryAndWithGivenExtension(@RequestBody DataFromViewDTO dataFromViewDTO) throws UnsupportedEncodingException, IOException {
 
-        File[] tab = byteService.searchFilesInGivenDirectoryWithGivenExtension(dataFromViewDTO);
+        List<File> tab = byteService.searchFilesInGivenDirectoryWithGivenExtension(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
 
-        for(Object o: tab){
-            System.out.println(o);
+//        for(Object o: tab){
+//            System.out.println(o);
+//        }
+
+        for(int i=0; i < tab.size(); i++){
+            byteService.searchBytesInFiles(tab.get(i), dataFromViewDTO.getInputBytes(), dataFromViewDTO.getOutputBytes());
+//
+
+//            byteService.searchAndReplaceBytes(tab.get(i), dataFromViewDTO.getInputBytes(), dataFromViewDTO.getOutputBytes());
+//            byteService.replaceBytes(tab[i], dataFromViewDTO.getOutputBytes());
         }
 
     }
+
+
+
 
 //    @GetMapping("/searchdirectory")
 //    public List<File> serch() throws IOException{
