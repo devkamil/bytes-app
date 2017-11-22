@@ -18,47 +18,20 @@ public class ByteController {
     private ByteService byteService;
 
 
-
-
-
-
-
-
-
-
-//    @GetMapping("/{filePath}")
-//    public String readFile (@PathVariable ("filePath") String filePath){
-//        return byteService.readFile(filePath + ".txt");
-//    }
-
-//    @PostMapping("/{filePath}")
-//    public void write (@PathVariable ("filePath") String filePath){
-//        byteService.writeFile(filePath + ".txt");
-//    }
-
-
-
-
-
-
-//    @PostMapping("/search")
-//    public void searchAndReplace(@RequestBody DataFromViewDTO dataFromViewDTO){
-//        byteService.show(dataFromViewDTO);
-//    }
-
-
     @PostMapping("/search")
     public void searchAndChangeBytesInFilesInGivenDirectoryAndWithGivenExtension(@RequestBody DataFromViewDTO dataFromViewDTO) throws UnsupportedEncodingException, IOException {
 
         List<File> tab = byteService.searchFilesInGivenDirectoryWithGivenExtension(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
 
-//        for(Object o: tab){
-//            System.out.println(o);
-//        }
 
         for(int i=0; i < tab.size(); i++){
             byteService.searchBytesInFiles(tab.get(i), dataFromViewDTO.getInputBytes(), dataFromViewDTO.getOutputBytes());
-//
+
+
+
+
+
+
 
 //            byteService.searchAndReplaceBytes(tab.get(i), dataFromViewDTO.getInputBytes(), dataFromViewDTO.getOutputBytes());
 //            byteService.replaceBytes(tab[i], dataFromViewDTO.getOutputBytes());
@@ -66,20 +39,4 @@ public class ByteController {
 
     }
 
-
-
-
-//    @GetMapping("/searchdirectory")
-//    public List<File> serch() throws IOException{
-//        System.out.println("METODA DIRECTORY");
-//        return byteService.listFiles();
-//
-//    }
-//
-//    @GetMapping("/searchdirectory")
-//    public void serch() throws IOException{
-//        System.out.println("METODA DIRECTORY");
-//        byteService.listFiles();
-//
-//    }
 }
