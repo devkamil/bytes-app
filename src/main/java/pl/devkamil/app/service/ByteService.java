@@ -1,150 +1,180 @@
 package pl.devkamil.app.service;
 
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
-import org.riversun.bigdoc.bin.BigFileSearcher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.devkamil.app.model.DataFromViewDTO;
-import sun.misc.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.riversun.finbin.BinaryUtil.getBytes;
+import org.apache.commons.io.FilenameUtils;
 
 
 @Service
 public class ByteService {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
-    List<File> fileList = new ArrayList<>();
+    private ArrayList<File> fileList = new ArrayList<>();
 
+    public ArrayList<File> getFileList() {
+        return fileList;
+    }
 
-    public List<File> searchFilesInGivenDirectoryWithGivenExtension(String path, String extension){
+    public void setFileList(ArrayList<File> fileList){
+        this.fileList = fileList;
+    }
+
+    public void clearList(){
+        getFileList().clear();
+    }
+
+    public List<File> searchFilesInDirectory(String path, String extension){
+
 
         File dir = new File(path);
 
         if(dir.isDirectory()){
             for(File file: dir.listFiles()){
-                searchFilesInGivenDirectoryWithGivenExtension(file.getAbsolutePath(), extension);
+                searchFilesInDirectory(file.getAbsolutePath(), extension);
             }
         }else if(dir.isFile() && dir.getName().endsWith(extension)){
-            fileList.add(dir);
+            getFileList().add(dir);
         }
-        return fileList;
+        return getFileList();
+    }
+
+
+    public void iterateFiles(List<File> tab, DataFromViewDTO dataFromViewDTO) throws IOException {
+        for (int i = 0; i < tab.size(); i++) {
+            searchBytesInFiles(tab.get(i), dataFromViewDTO.getInputBytes(), dataFromViewDTO.getOutputBytes());
+        }
+        clearList();
+
+
+
     }
 
 
 
     public void searchBytesInFiles(File file, String searchBytes, String outputBytes) throws IOException {
-        BigFileSearcher bigFileSearcher = new BigFileSearcher();
+
+        Path path = Paths.get(file.getAbsolutePath());
+        byte[] fileBytesTab = Files.readAllBytes(path);
         byte[] searchBytesTab = searchBytes.getBytes("UTF8");
-        List<Long> findList = bigFileSearcher.searchBigFile(file, searchBytesTab);
-        System.out.println("positions: " + file.getName() + findList);
-        long numer;
-
-        replaceBytes123(file, findList, searchBytes,outputBytes);
+        LinkedList<Integer> findList = new LinkedList<>();
 
 
+        int fileBytesTabLength = fileBytesTab.length;
+        int searchBytesTabLength = searchBytesTab.length;
+
+        int i = 0;
+        int j;
+
+        while(i < fileBytesTabLength - searchBytesTabLength + 1){
+            j = 0;
+            while (( j < searchBytesTabLength) && (searchBytesTab[j] == fileBytesTab[i+j])){
+                j++;
+            }
+            if ( j == searchBytesTabLength){
+                System.out.println(i);
+                findList.add(i);
+                i++;
+            }
+            i++;
+        }
+
+        System.out.println(findList);
+
+        replaceBytes(file, findList, searchBytes, outputBytes);
 
 
-
-
-
-//        for(int i=0; i < findList.size(); i++){
-//            numer = findList.get(i);
-//            System.out.println(numer);
-////            replaceBytes(file, numer, outputBytes);
-//
-//            replaceBytes123(file, numer, searchBytes, outputBytes);
-//        }
 
     }
 
 
-//    public void replaceBytes(File file, long positionOfBytes, String outputBytes) throws IOException {
-//        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rwd");
-//        byte[] outputBytesTab = outputBytes.getBytes();
-////        System.out.println(file.getName() + " ODCZYT " + randomAccessFile.seek(4));
-//        randomAccessFile.seek(positionOfBytes);
-//        System.out.println(outputBytesTab.length);
-//        randomAccessFile.write(outputBytesTab);
-//
-//
-////        randomAccessFile.write(outputBytesTab, (int) positionOfBytes, ((int) positionOfBytes + outputBytesTab.length));
-////        randomAccessFile.write(outputBytesTab, 2,3);
-//
-////        randomAccessFile.write(outputBytesTab, 0, 4);
-//    }
 
 
-
-
-    public void replaceBytes123(File file, List findList, String inputBytes, String outputBytes) throws IOException {
+    public void replaceBytes(File file, List<Integer> findList, String inputBytes, String outputBytes) throws IOException {
         Path path = Paths.get(file.getAbsolutePath());
         byte[] fileBytesTab = Files.readAllBytes(path);
         byte[] searchBytesTab = inputBytes.getBytes("UTF8");
         byte[] outputBytesTab = outputBytes.getBytes("UTF8");
-        
-
-
         List<byte[]> byteArrays = new LinkedList<>();
+        int beginWrite = 0;
 
-        int begin = 0;
 
-        outer:
-        for(int i=0; i < (fileBytesTab.length - searchBytesTab.length + 1); i++){
-            for(int j=0; j < searchBytesTab.length; j++){
-                if(fileBytesTab[i+j] != searchBytesTab[j]){
-                    continue outer;
-                }
+        if(findList.size() != 0) {
+
+            for (int i = 0; i < findList.size(); i++) {
+                byteArrays.add(Arrays.copyOfRange(fileBytesTab, beginWrite, findList.get(i)));
+                byteArrays.add(Arrays.copyOfRange(outputBytesTab, 0, outputBytesTab.length));
+                beginWrite = findList.get(i) + searchBytesTab.length;
             }
-            byteArrays.add(Arrays.copyOfRange(fileBytesTab, begin, i));
-            byteArrays.add(Arrays.copyOfRange(outputBytesTab, 0, outputBytesTab.length));
-            begin = i + searchBytesTab.length;
+            byteArrays.add(Arrays.copyOfRange(fileBytesTab, beginWrite, fileBytesTab.length));
+
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            for (int i = 0; i < byteArrays.size(); i++) {
+                byteArrayOutputStream.write(byteArrays.get(i));
+            }
+
+            byte[] allTab = byteArrayOutputStream.toByteArray();
+
+            System.out.println(allTab);
+
+
+            saveBytesTabToFile(file, allTab);
+
         }
-        byteArrays.add(Arrays.copyOfRange(fileBytesTab, begin, fileBytesTab.length));
-
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-
-        for(int i=0; i < byteArrays.size(); i++){
-            byteArrayOutputStream.write(byteArrays.get(i));
-        }
-
-        byte [] allTab = byteArrayOutputStream.toByteArray();
-
-        System.out.println(allTab);
-
-
-        RandomAccessFile randomAccessFile = new RandomAccessFile("pliknowyplik.txt", "rwd");
-
-
-
-        randomAccessFile.write(allTab);
-
-
-
-
-
-//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileBytesTab);
-//        System.out.println("BYTEARRAY: " + byteArrayInputStream);
-//        BufferedInputStream input = new BufferedInputStream(byteArrayInputStream);
-//        System.out.println("BUFFERED: " + input);
-
-//        System.out.println("FINDLIST:  " + findList);
 
     }
+
+
+
+    public void saveBytesTabToFile(File file, byte[] bytesTabToSave){
+
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        String currentDateTime = DATE_TIME_FORMATTER.format(zonedDateTime);
+        String filenameWithoutExtension = FilenameUtils.removeExtension(file.getName());
+        String fileExtension = FilenameUtils.getExtension(file.getName());
+        String currentPath = System.getProperty("user.dir");
+
+        System.out.println(currentPath);
+        System.out.println(currentPath+"\\folder\\saved\\"+ filenameWithoutExtension+currentDateTime+"."+fileExtension);
+        System.out.println(currentDateTime);
+        System.out.println(filenameWithoutExtension);
+
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(currentPath + "\\folder\\saved\\"
+                + filenameWithoutExtension + currentDateTime + "." + fileExtension, "rw")){
+
+            randomAccessFile.write(bytesTabToSave);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
