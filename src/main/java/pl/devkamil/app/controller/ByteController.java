@@ -19,10 +19,10 @@ public class ByteController {
 
 
     @PostMapping("/search")
-    public void searchAndReplaceBytes(@RequestBody DataFromViewDTO dataFromViewDTO) throws UnsupportedEncodingException, IOException {
+    public void searchAndReplaceBytes(@RequestBody DataFromViewDTO dataFromViewDTO) throws IOException {
 
-        List<File> tab = byteService.searchFilesInDirectory(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
-        byteService.iterateFiles(tab, dataFromViewDTO);
+        List<File> listFilesInGivenDirectory = byteService.searchFilesInDirectory(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
+        byteService.iterateFiles(listFilesInGivenDirectory, dataFromViewDTO);
 
     }
 
