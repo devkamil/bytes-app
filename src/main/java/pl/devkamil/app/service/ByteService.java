@@ -43,10 +43,13 @@ public class ByteService {
     public List<File> searchFilesInDirectory(String path, String extension){
         File anotherFileInDirectory = new File(path);
 
+        // if an another file is a directory, list all files from this directory recursively
         if(anotherFileInDirectory.isDirectory()){
             for(File file: anotherFileInDirectory.listFiles()){
                 searchFilesInDirectory(file.getAbsolutePath(), extension);
             }
+
+            // If given File is a single file (not directory) and if it ends with "extension", add it to List
         }else if(anotherFileInDirectory.isFile() && anotherFileInDirectory.getName().endsWith(extension)){
             getFileList().add(anotherFileInDirectory);
         }
