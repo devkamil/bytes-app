@@ -19,7 +19,7 @@ public class ByteController {
 
 
     @PostMapping("/search")
-    public void searchAndReplaceBytes(@RequestBody DataFromViewDTO dataFromViewDTO) throws IOException {
+    public void searchAndReplaceBytes(@RequestBody DataFromViewDTO dataFromViewDTO) {
 
         List<File> listFilesInGivenDirectory = byteService.searchFilesInDirectory(dataFromViewDTO.getPathToFile(), dataFromViewDTO.getFileExtension());
         byteService.iterateFiles(listFilesInGivenDirectory, dataFromViewDTO);
